@@ -6,31 +6,11 @@ class API(object):
 class Article(object):
 
     def __init__(self, rics, topics, timestamp, headline, body):
-        self._rics = rics
-        self._topics = topics
-        self._timestamp = timestamp
-        self._headline = headline
-        self._body = body
-
-    @property
-    def rics(self):
-        return self._rics
-
-    @property
-    def topics(self):
-        return self._topics
-
-    @property
-    def timestamp(self):
-        return self._timestamp
-
-    @property
-    def headline(self):
-        return self._headline
-
-    @property
-    def body(self):
-        return self._body
+        self.rics = rics
+        self.topics = topics
+        self.timestamp = timestamp
+        self.headline = headline
+        self.body = body
 
     def __hash__(self):
         return hash(self.headline + '[]' + self.timestamp)
@@ -42,16 +22,26 @@ class Article(object):
             self.headline == other.headline and \
             self.body == other.body
 
+    def __repr__(self):
+        return 'Article({}, {}, {}, {}, {})'.format(*map(repr, [self.rics, self.topics, self.timestamp, self.headline, self.body]))
+
 class Articles(object):
 
-    def __init__(self, articles, time):
-        self._articles = articles
-        self._time = time
+    def __init__(self, success, error=None, articles=None, time=None):
+        self.articles = articles
+        self.time = time
+        self.success = success
+        self.error = error
 
-    @property
-    def articles(self):
-        return self._articles
+    def __eq__(self, other):
+        if self.success != other.success:
+            return False
+        if not self.success:
+            return self.error == other.error
+        return self.articles == other.articles and \
+            self.time == other.time
 
-    @property
-    def time(self):
-        return self._time
+    def __repr__(self):
+        if not self.success:
+            return 'Articles({}, error = {})'.format(repr(self.success), repr(self.error))
+        return 'Articles({}, articles = {}, time = {})'.format(repr(self.success), repr(self.articles), repr(self.time))
