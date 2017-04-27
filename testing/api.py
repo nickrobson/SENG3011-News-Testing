@@ -29,9 +29,9 @@ class Articles(object):
 
     def __init__(self, success, error=None, articles=None, time=None):
         self.success = success
+        self.time = time
         if success:
             self.articles = sorted(articles, key = lambda a: (a.timestamp, a.headline))
-            self.time = time
         else:
             self.error = error
 

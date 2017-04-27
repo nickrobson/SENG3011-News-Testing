@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import csv
 import subprocess
 import sys
 
@@ -13,62 +14,103 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--interactive', '-i', help='Wait for user to press enter after each result before continuing.', action='store_true')
     args = parser.parse_args()
+    NUM_RUNS = 5
 
     cba = CoolBananasAPI()
     ffs = FFSAPI()
 
-    for test_case in test_cases:
-        printTest(test_case)
-        cbares = cba.query(*test_case)
-        ffsres = ffs.query(*test_case)
+    with open('timingResults.csv', 'w') as csvfile:
+        fieldnames = ['test_number', 'ffs_ave_time', 'cba_ave_time']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
 
-        if cbares == ffsres:
-            print('Same outputs!', file=sys.stderr)
+        for test_number, test_case in enumerate(test_cases):
+            printTest(test_case)
+            cbares = cba.query(*test_case)
+            ffsres = ffs.query(*test_case)
 
-        elif cbares.success and not ffsres.success:
-            print('CBA succeeded; FFS errored', file=sys.stderr)
-            print('FFS error:', ffsres.error, file=sys.stderr)
-            print('CBA:', cbares)
-            print('FFS:', ffsres)
+            print(cbares)
+            print()
+            print(ffsres)
+            print()
 
-        elif not cbares.success and ffsres.success:
-            print('CBA errored; FFS succeeded', file=sys.stderr)
-            print('CBA error:', cbares.error, file=sys.stderr)
-            print('CBA:', cbares)
-            print('FFS:', ffsres)
+            cba_ave = 0
+            ffs_ave = 0
+            if cbares.success:
+                cba_ave += cbares.time
+            if ffsres.success:
+                ffs_ave += ffsres.time
 
-        elif not cbares.success:
-            print('Both errored!', file=sys.stderr)
-            print('CBA error:', cbares.error, file=sys.stderr)
-            print('FFS error:', ffsres.error, file=sys.stderr)
+            for i in range(1, NUM_RUNS):
+                cba_test_run = cba.query(*test_case)
+                ffs_test_run = ffs.query(*test_case)
+                if cba_test_run.success:
+                    cba_ave += cba_test_run.time
+                if ffs_test_run.success:
+                    ffs_ave += ffs_test_run.time
 
-        else:
-            cba_articles = cbares.articles
-            ffs_articles = ffsres.articles
+            ffs_ave /= NUM_RUNS
+            cba_ave /= NUM_RUNS
 
-            print('Both succeeded!', file=sys.stderr)
-            print('CBA finished in', cbares.time, 'seconds', file=sys.stderr)
-            print('FFS finished in', ffsres.time, 'seconds', file=sys.stderr)
+            if ffs_ave == 0:
+                ffs_ave = "error" # when no timing results have been provided
+            if cba_ave == 0:
+                cba_ave = "error"
+            
+            writer.writerow({
+                'test_number': test_number + 1,
+                'ffs_ave_time': ffs_ave,
+                'cba_ave_time': cba_ave
+            })
 
-            if len(cba_articles) != len(ffs_articles):
-                print('Different number of results!', file=sys.stderr)
-                print('CBA had', len(cba_articles), 'results', file=sys.stderr)
-                print('FFS had', len(ffs_articles), 'results', file=sys.stderr)
-                print('CBA articles:', cba_articles)
-                print('FFS articles:', ffs_articles)
+            if cbares == ffsres:
+                print('Same outputs!', file=sys.stderr)
+
+            elif cbares.success and not ffsres.success:
+                print('CBA succeeded; FFS errored', file=sys.stderr)
+                print('FFS error:', ffsres.error, file=sys.stderr)
+                print('CBA:', cbares)
+                print('FFS:', ffsres)
+
+            elif not cbares.success and ffsres.success:
+                print('CBA errored; FFS succeeded', file=sys.stderr)
+                print('CBA error:', cbares.error, file=sys.stderr)
+                print('CBA:', cbares)
+                print('FFS:', ffsres)
+
+            elif not cbares.success:
+                print('Both errored!', file=sys.stderr)
+                print('CBA error:', cbares.error, file=sys.stderr)
+                print('FFS error:', ffsres.error, file=sys.stderr)
 
             else:
-                for i, cba_article in enumerate(cba_articles):
-                    ffs_article = ffs_articles[i]
-                    if cba_article != ffs_article:
-                        print('Article', i, 'mismatch!', file=sys.stderr)
-                        print('CBA:', cba_article)
-                        print('FFS:', ffs_article)
+                cba_articles = cbares.articles
+                ffs_articles = ffsres.articles
 
-        print(file=sys.stderr)
-        if args.interactive:
-            input('Press [Enter] to continue.')
-            subprocess.call(['clear'])
+                print('Both succeeded!', file=sys.stderr)
+                print('CBA finished in', cbares.time, 'seconds', file=sys.stderr)
+                print('FFS finished in', ffsres.time, 'seconds', file=sys.stderr)
+
+                if len(cba_articles) != len(ffs_articles):
+                    print('Different number of results!', file=sys.stderr)
+                    print('CBA had', len(cba_articles), 'results', file=sys.stderr)
+                    print('FFS had', len(ffs_articles), 'results', file=sys.stderr)
+                    print('CBA articles:', cba_articles)
+                    print('FFS articles:', ffs_articles)
+
+                else:
+                    for i, cba_article in enumerate(cba_articles):
+                        ffs_article = ffs_articles[i]
+                        if cba_article != ffs_article:
+                            print('Article', i, 'mismatch!', file=sys.stderr)
+                            print('CBA:', cba_article)
+                            print('FFS:', ffs_article)
+
+            print(file=sys.stderr)
+            if args.interactive:
+                input('Press [Enter] to continue.')
+                subprocess.call(['clear'])
+
 
 def printTest(test_case):
     print('RICs:       ', test_case[0], file=sys.stderr)
