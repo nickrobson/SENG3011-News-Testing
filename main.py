@@ -6,11 +6,42 @@ from testing.cba import CoolBananasAPI
 from testing.ffs import FFSAPI
 
 test_cases = [
+    # Test 1: Date range (test a two month range, then a four month, etc.)
     [
         ('BHP.AX', 'BLT.L'),
         ('COM', 'AMERS'),
-        '2015-10-01T00:00:00.000Z',
-        '2015-10-10T00:00:00.000Z'
+        '2015-01-01T00:00:00.000Z',
+        '2015-03-01T00:00:00.000Z'
+    ],
+    [
+        ('BHP.AX', 'BLT.L'),
+        ('COM', 'AMERS'),
+        '2015-01-01T00:00:00.000Z',
+        '2015-05-01T00:00:00.000Z'
+    ],
+    [
+        ('BHP.AX', 'BLT.L'),
+        ('COM', 'AMERS'),
+        '2015-01-01T00:00:00.000Z',
+        '2015-07-01T00:00:00.000Z'
+    ],
+    [
+        ('BHP.AX', 'BLT.L'),
+        ('COM', 'AMERS'),
+        '2015-01-01T00:00:00.000Z',
+        '2015-09-01T00:00:00.000Z'
+    ],
+    [
+        ('BHP.AX', 'BLT.L'),
+        ('COM', 'AMERS'),
+        '2015-01-01T00:00:00.000Z',
+        '2015-11-01T00:00:00.000Z'
+    ],,
+    [
+        ('BHP.AX', 'BLT.L'),
+        ('COM', 'AMERS'),
+        '2015-01-01T00:00:00.000Z',
+        '2016-01-01T00:00:00.000Z'
     ],
 ]
 
