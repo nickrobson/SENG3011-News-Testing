@@ -6,8 +6,8 @@ class API(object):
 class Article(object):
 
     def __init__(self, rics, topics, timestamp, headline, body):
-        self.rics = rics
-        self.topics = topics
+        self.rics = sorted(rics)
+        self.topics = sorted(topics)
         self.timestamp = timestamp
         self.headline = headline
         self.body = body
@@ -28,10 +28,12 @@ class Article(object):
 class Articles(object):
 
     def __init__(self, success, error=None, articles=None, time=None):
-        self.articles = articles
-        self.time = time
         self.success = success
-        self.error = error
+        if success:
+            self.articles = sorted(articles, key = lambda a: (a.timestamp, a.headline))
+            self.time = time
+        else:
+            self.error = error
 
     def __eq__(self, other):
         if self.success != other.success:
@@ -44,4 +46,4 @@ class Articles(object):
     def __repr__(self):
         if not self.success:
             return 'Articles({}, error = {})'.format(repr(self.success), repr(self.error))
-        return 'Articles({}, articles = {}, time = {})'.format(repr(self.success), repr(self.articles), repr(self.time))
+        return 'Articles({}, articles = {}, time = {})'.format(*map(repr, [self.success, self.articles, self.time]))

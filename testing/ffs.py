@@ -43,6 +43,13 @@ class FFSAPI(API):
             timestamp = article['TimeStamp']
             headline = article['Headline']
             body = article['NewsText']
+            # Patch their results to match the universal format we're testing against:
+            rics = list(map(lambda ric: ric[4:], rics))
+            topics = list(map(lambda topic: topic[3:], topics))
+            millis = timestamp[timestamp.rfind('.')+1:-1]
+            while len(millis) < 3: millis += '0'
+            timestamp = timestamp[:timestamp.rfind('.')+1] + millis + 'Z'
+            # Add article to results
             articles.append(Article(rics, topics, timestamp, headline, body))
 
-        return Articles(True, articles = articles, time = data['logfile']['info']['elapsed'])
+        return Articles(True, articles = articles, time = float(data['logfile']['info']['elapsed'][:-8]))
