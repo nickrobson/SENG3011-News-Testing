@@ -14,6 +14,11 @@ def main():
         cbares = cba.query(*test_case)
         ffsres = ffs.query(*test_case)
 
+        print(cbares)
+        print()
+        print(ffsres)
+        print()
+
         # TODO compare the responses
 
 def printTest(test_case):
