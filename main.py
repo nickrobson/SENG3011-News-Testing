@@ -135,11 +135,18 @@ def main():
     ffs = FFSAPI()
 
     for test_case in test_cases:
+        printTest(test_case)
         cbares = cba.query(*test_case)
         ffsres = ffs.query(*test_case)
 
         # TODO compare the responses
 
+def printTest(test_case):
+    print('RICs: ' + str(test_case[0]))
+    print('Topic Codes: ' + str(test_case[1]))
+    print('Start date: ' + str(test_case[2]))
+    print('End date: ' + str(test_case[3]))
+    print()
 
 if __name__ == '__main__':
     main()
