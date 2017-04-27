@@ -29,39 +29,35 @@ def main():
             cbares = cba.query(*test_case)
             ffsres = ffs.query(*test_case)
 
-            print(cbares)
-            print()
-            print(ffsres)
-            print()
+            if not args.interactive:
+                cba_ave = 0
+                ffs_ave = 0
+                if cbares.success:
+                    cba_ave += cbares.time
+                if ffsres.success:
+                    ffs_ave += ffsres.time
 
-            cba_ave = 0
-            ffs_ave = 0
-            if cbares.success:
-                cba_ave += cbares.time
-            if ffsres.success:
-                ffs_ave += ffsres.time
+                for i in range(1, NUM_RUNS):
+                    cba_test_run = cba.query(*test_case)
+                    ffs_test_run = ffs.query(*test_case)
+                    if cba_test_run.success:
+                        cba_ave += cba_test_run.time
+                    if ffs_test_run.success:
+                        ffs_ave += ffs_test_run.time
 
-            for i in range(1, NUM_RUNS):
-                cba_test_run = cba.query(*test_case)
-                ffs_test_run = ffs.query(*test_case)
-                if cba_test_run.success:
-                    cba_ave += cba_test_run.time
-                if ffs_test_run.success:
-                    ffs_ave += ffs_test_run.time
+                ffs_ave /= NUM_RUNS
+                cba_ave /= NUM_RUNS
 
-            ffs_ave /= NUM_RUNS
-            cba_ave /= NUM_RUNS
-
-            if ffs_ave == 0:
-                ffs_ave = "error" # when no timing results have been provided
-            if cba_ave == 0:
-                cba_ave = "error"
+                if ffs_ave == 0:
+                    ffs_ave = "error" # when no timing results have been provided
+                if cba_ave == 0:
+                    cba_ave = "error"
             
-            writer.writerow({
-                'test_number': test_number + 1,
-                'ffs_ave_time': ffs_ave,
-                'cba_ave_time': cba_ave
-            })
+                writer.writerow({
+                    'test_number': test_number + 1,
+                    'ffs_ave_time': ffs_ave,
+                    'cba_ave_time': cba_ave
+                })
 
             if cbares == ffsres:
                 print('Same outputs!', file=sys.stderr)
