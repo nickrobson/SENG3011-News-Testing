@@ -1,0 +1,22 @@
+# python binary files
+
+*.pyc
+*.pyo
+
+# virtualenv files
+
+/venv/
+
+# pyenv files
+
+.python-version
+
+# database files
+
+*.sqlite3
+
+# SENG3011 project files
+
+*.log
+/.tags/
+/.version
