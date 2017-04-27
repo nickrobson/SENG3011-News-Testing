@@ -54,10 +54,10 @@ def main():
 
 
 def printTest(test_case):
-    print('RICs: ' + str(test_case[0]))
-    print('Topic Codes: ' + str(test_case[1]))
-    print('Start date: ' + str(test_case[2]))
-    print('End date: ' + str(test_case[3]))
+    print('RICs:       ', test_case[0])
+    print('Topic Codes:', test_case[1])
+    print('Start Date: ', test_case[2])
+    print('End Date:   ', test_case[3])
     print()
 
 
@@ -118,7 +118,7 @@ test_cases = [
         '2016-01-01T00:00:00.000Z'
     ],
     [
-        ('BHP.AX'),
+        ('BHP.AX',),
         ('COM', 'AMERS'),
         '2015-01-01T00:00:00.000Z',
         '2016-01-01T00:00:00.000Z'
@@ -156,7 +156,7 @@ test_cases = [
     ],
     [
         ('BHP.AX', 'BLT.L'),
-        ('AMERS'),
+        ('AMERS',),
         '2015-01-01T00:00:00.000Z',
         '2016-01-01T00:00:00.000Z'
     ],
