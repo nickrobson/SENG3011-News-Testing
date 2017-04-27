@@ -8,15 +8,10 @@ from .api import API, Article, Articles
 class FFSAPI(API):
 
     def query(self, rics, topics, start_date, end_date):
-        if (type(rics) is str):
-            ric = 'RIC_' + rics
-        else: # is a list of rics
-            ric = ','.join(map(lambda ric: 'RIC_' + ric, rics))
-        
         params = {
             'startTime': start_date,
             'endTime': end_date,
-            'ric': ric,
+            'ric': ','.join(map(lambda ric: 'RIC_' + ric, rics)),
             'topicCode': ','.join(topics)
         }
 
