@@ -5,6 +5,25 @@ from datetime import datetime
 from testing.cba import CoolBananasAPI
 from testing.ffs import FFSAPI
 
+def main():
+    cba = CoolBananasAPI()
+    ffs = FFSAPI()
+
+    for test_case in test_cases:
+        printTest(test_case)
+        cbares = cba.query(*test_case)
+        ffsres = ffs.query(*test_case)
+
+        # TODO compare the responses
+
+def printTest(test_case):
+    print('RICs: ' + str(test_case[0]))
+    print('Topic Codes: ' + str(test_case[1]))
+    print('Start date: ' + str(test_case[2]))
+    print('End date: ' + str(test_case[3]))
+    print()
+
+
 test_cases = [
     # Test 1: Date range (test a two month range, then a four month, etc.)
     [
@@ -129,24 +148,6 @@ test_cases = [
         '2016-01-01T00:00:00.000Z'
     ]
 ]
-
-def main():
-    cba = CoolBananasAPI()
-    ffs = FFSAPI()
-
-    for test_case in test_cases:
-        printTest(test_case)
-        cbares = cba.query(*test_case)
-        ffsres = ffs.query(*test_case)
-
-        # TODO compare the responses
-
-def printTest(test_case):
-    print('RICs: ' + str(test_case[0]))
-    print('Topic Codes: ' + str(test_case[1]))
-    print('Start date: ' + str(test_case[2]))
-    print('End date: ' + str(test_case[3]))
-    print()
 
 if __name__ == '__main__':
     main()
