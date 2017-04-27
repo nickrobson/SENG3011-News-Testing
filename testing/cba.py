@@ -1,4 +1,5 @@
 import json
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -20,8 +21,12 @@ class CoolBananasAPI(API):
 
         url = 'https://nickr.xyz/coolbananas/api/?' + '&'.join(encoded)
 
-        with urllib.request.urlopen(url) as conn:
-            raw = conn.read().decode()
+        try:
+            with urllib.request.urlopen(url) as conn:
+                raw = conn.read()
+        except urllib.error.HTTPError as error:
+            with error:
+                raw = error.read().decode()
 
         data = json.loads(raw)
 
